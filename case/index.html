@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keep × 京东运动 · 614 贵马 Campaign 案例</title>
+<style>
+  :root {
+    --red: #E24A33;
+    --cream: #FFF9F1;
+    --brown: #554457;
+    --gray: #8a7a8e;
+    --line: #f0e2e8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--cream);
+    color: var(--brown);
+    overflow-x: hidden;
+  }
+
+  /* ============ 左侧赛道进度条 ============ */
+  .track {
+    position: fixed;
+    left: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 58vh;
+  }
+  .track-line {
+    position: absolute; top: 0; bottom: 0; width: 4px;
+    background: #ecdce1; border-radius: 2px; left: 50%; transform: translateX(-50%);
+  }
+  .track-fill {
+    position: absolute; top: 0; width: 4px;
+    background: var(--red); border-radius: 2px; left: 50%; transform: translateX(-50%);
+    height: 0%; transition: height .15s linear;
+  }
+  .track-runner {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    top: 0%; font-size: 20px; transition: top .15s linear; z-index: 2;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.2));
+  }
+  .station { position: relative; flex: 1; display: flex; align-items: center; }
+  .station-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #fff; border: 3px solid #ecdce1; z-index: 3; transition: all .3s;
+  }
+  .station.active .station-dot {
+    border-color: var(--red); background: var(--red);
+    transform: scale(1.25); box-shadow: 0 0 12px rgba(226,74,51,.5);
+  }
+  .station-label {
+    position: absolute; left: 26px; font-size: 12px; color: var(--gray);
+    white-space: nowrap; letter-spacing: 1px; transition: all .3s; cursor: pointer;
+  }
+  .station.active .station-label { color: var(--red); font-weight: 700; }
+
+  /* ============ 主内容 ============ */
+  .main { margin-left: 110px; max-width: 800px; padding: 0 32px 80px; }
+
+  /* Hero */
+  .hero { padding: 72px 0 24px; }
+  .hero-tag {
+    display: inline-block; background: var(--red); color: #fff;
+    font-size: 13px; letter-spacing: 2px; padding: 6px 16px;
+    border-radius: 999px; width: fit-content; margin-bottom: 18px;
+  }
+  .hero h1 { font-size: 44px; line-height: 1.25; margin-bottom: 12px; letter-spacing: 1px; }
+  .hero h1 em { color: var(--red); font-style: normal; }
+  .hero .sub { font-size: 16.5px; color: var(--gray); line-height: 1.9; max-width: 600px; }
+  .role-card {
+    margin-top: 20px; background: #fff; border-radius: 14px; padding: 16px 20px;
+    border: 1px solid var(--line); border-left: 5px solid var(--red);
+    font-size: 14.5px; line-height: 1.9; color: #5d4a60;
+  }
+  .role-card b { color: var(--red); }
+  .scroll-hint { margin-top: 26px; font-size: 13px; color: var(--gray); animation: bob 1.6s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(6px); } }
+
+  /* 赛段 */
+  .stage {
+    padding: 44px 0;
+    opacity: 0; transform: translateY(24px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .stage.show { opacity: 1; transform: translateY(0); }
+
+  .stage-head { display: flex; align-items: center; gap: 13px; margin-bottom: 16px; }
+  .stage-num {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--red); color: #fff; display: grid; place-items: center;
+    font-size: 17px; font-weight: 700; flex-shrink: 0;
+  }
+  .stage-title { font-size: 26px; letter-spacing: 1px; }
+  .stage-kicker { font-size: 12px; color: var(--red); letter-spacing: 3px; margin-bottom: 5px; }
+
+  .stage-body { font-size: 15px; line-height: 1.95; color: #5d4a60; }
+
+  .card {
+    background: #fff; border-radius: 16px; padding: 18px 22px;
+    box-shadow: 0 6px 24px rgba(197,120,140,.1);
+    border: 1px solid var(--line); margin: 12px 0;
+  }
+  .card h4 { font-size: 14.5px; color: var(--red); margin-bottom: 8px; letter-spacing: 1px; }
+  .card p { font-size: 14px; line-height: 1.9; }
+
+  /* 背景三侧分行 */
+  .trio { display: grid; gap: 10px; margin: 14px 0; }
+  .trio-item {
+    background: #fff; border-radius: 14px; padding: 16px 20px;
+    border: 1px solid var(--line); display: flex; gap: 14px; align-items: flex-start;
+  }
+  .trio-item .t-icon {
+    width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+    display: grid; place-items: center; font-size: 18px;
+    background: linear-gradient(135deg, #fde9e4, #fbd8dd);
+  }
+  .trio-item b { display: block; font-size: 14.5px; margin-bottom: 4px; color: var(--brown); }
+  .trio-item span { font-size: 13.5px; line-height: 1.8; color: #6b5a70; }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+  .chip {
+    background: #fff; border: 1px solid var(--line); border-radius: 999px;
+    padding: 6px 14px; font-size: 13px;
+  }
+
+  /* 数据 */
+  .data-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 24px;
+  }
+  .data-wall { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; }
+  .data-item {
+    background: #fff; border-radius: 14px; padding: 18px 12px; text-align: center;
+    border: 1px solid var(--line); box-shadow: 0 4px 16px rgba(197,120,140,.08);
+  }
+  .data-num {
+    font-size: 32px; font-weight: 800; color: var(--red);
+    font-variant-numeric: tabular-nums; line-height: 1.1;
+  }
+  .data-num small { font-size: 16px; font-weight: 600; }
+  .data-label { font-size: 12px; color: var(--gray); margin-top: 6px; line-height: 1.5; }
+
+  /* 照片 */
+  .photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0 6px; }
+  .photos img {
+    width: 100%; border-radius: 10px; display: block;
+    box-shadow: 0 4px 14px rgba(80,50,70,.12);
+  }
+  .photos-2 { grid-template-columns: repeat(2, 1fr); }
+  .photo-cap { font-size: 12px; color: var(--gray); text-align: center; margin: 6px 0 10px; }
+
+  /* 突发状况 */
+  .alert-card {
+    background: linear-gradient(135deg, #fff 0%, #fff5f2 100%);
+    border: 1px solid #f3c3b8; border-left: 5px solid var(--red);
+    border-radius: 14px; padding: 18px 22px; margin: 14px 0;
+  }
+  .alert-card .step {
+    display: flex; gap: 12px; align-items: flex-start;
+    margin: 10px 0; font-size: 14.5px; line-height: 1.85;
+  }
+  .alert-card .num {
+    flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--red); color: #fff; display: grid; place-items: center;
+    font-size: 13px; font-weight: 700; margin-top: 3px;
+  }
+  .alert-card .num.ok { background: #7fb069; }
+
+  /* 复盘 */
+  .review-grid { display: grid; gap: 10px; }
+  .review-grid .card.good { border-left: 5px solid #7fb069; }
+  .review-grid .card.better { border-left: 5px solid #f4a259; }
+  .review-grid .card.copy { border-left: 5px solid #6a8eaf; }
+
+  .footer { text-align: center; padding: 40px 0 26px; color: var(--gray); font-size: 12.5px; }
+
+  @media (max-width: 720px) {
+    .track { left: 6px; height: 50vh; }
+    .station-label { display: none; }
+    .main { margin-left: 38px; padding: 0 14px 60px; }
+    .hero h1 { font-size: 28px; }
+    .hero { padding-top: 48px; }
+    .stage-title { font-size: 21px; }
+    .stage { padding: 32px 0; }
+    .data-strip, .data-wall { grid-template-columns: repeat(2, 1fr); }
+    .photos { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<nav class="track" id="track">
+  <div class="track-line"></div>
+  <div class="track-fill" id="trackFill"></div>
+  <div class="track-runner" id="runner">🏃</div>
+</nav>
+
+<main class="main">
+
+  <!-- ================= 起点 ================= -->
+  <section class="hero stage" data-stage="起点">
+    <span class="hero-tag">CAMPAIGN 案例 · 2026.05—06</span>
+    <h1>Keep × 京东运动<br>614 贵阳马拉松<em>赛事合作</em></h1>
+    <p class="sub">
+      新品未上市就进赛场：用 30 位专业跑者 × 90 篇种草笔记，跑通「内容种草 — 电商转化」完整闭环。
+    </p>
+    <div class="role-card">
+      <b>我的角色</b>：达人种草全链路负责人 + 官方内容规划 + 项目 Timeline 统筹
+      <br>达人招募筛选与 brief 制定 · 官方笔记节奏规划 · 跨部门（京东/供应链/设计/App 资源位）协调推进
+    </div>
+    <div class="data-strip">
+      <div class="data-item"><div class="data-num" data-n="90">0</div><div class="data-label">种草笔记（篇）</div></div>
+      <div class="data-item"><div class="data-num" data-n="35" data-suffix="万">0</div><div class="data-label">达人内容总曝光</div></div>
+      <div class="data-item"><div class="data-num" data-n="100" data-suffix="%">0</div><div class="data-label">拍单率 · 好评率</div></div>
+      <div class="data-item"><div class="data-num" data-n="2700" data-suffix="%">0</div><div class="data-label">店铺 PV 环比增长</div></div>
+    </div>
+    <div class="scroll-hint">↓ 沿赛道看完整思路</div>
+  </section>
+
+  <!-- ================= 背景 ================= -->
+  <section class="stage" data-stage="背景">
+    <div class="stage-kicker">STAGE 01 · BACKGROUND</div>
+    <div class="stage-head"><div class="stage-num">背</div><h2 class="stage-title">三线交汇的机会点</h2></div>
+    <div class="stage-body">
+      <div class="trio">
+        <div class="trio-item">
+          <div class="t-icon">👟</div>
+          <div><b>产品侧</b><span>Keep 专业跑步线新品（KPB 风洞背心）上市在即，急需在跑者人群中建立「专业」心智。</span></div>
+        </div>
+        <div class="trio-item">
+          <div class="t-icon">🏁</div>
+          <div><b>场景侧</b><span>贵阳马拉松聚集全马/半马高浓度专业跑者，是新品最精准的天然场景。</span></div>
+        </div>
+        <div class="trio-item">
+          <div class="t-icon">🛒</div>
+          <div><b>渠道侧</b><span>京东运动为贵马金牌赞助方，手握赛事会场与直播资源；618 大促同期，具备交易承接能力。</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h4>关键判断</h4>
+        <p>三方资源互补——Keep 出产品与内容，京东出资源与流量，赛事出人群与场景。不做单点曝光，做「内容—体验—交易」的完整闭环。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 洞察与策略 ================= -->
+  <section class="stage" data-stage="策略">
+    <div class="stage-kicker">STAGE 02 · INSIGHT & STRATEGY</div>
+    <div class="stage-head"><div class="stage-num">策</div><h2 class="stage-title">跑者只信跑者</h2></div>
+    <div class="stage-body">
+      <div class="card">
+        <h4>人群洞察</h4>
+        <p>① 跑者装备决策高度依赖<b>真实跑者背书</b>，垂类达人实测比品牌广告更有说服力；② 备赛决策<b>前置 1-2 周</b>，赛中/赛后是情感共鸣高峰；③ 磨腋下、闷汗、晃动是跑者服饰明确痛点，与新品卖点一一对应。</p>
+      </div>
+      <div class="card">
+        <h4>一句话策略</h4>
+        <p><b>以赛事为锚点：达人真实实测内容打心智，官方账号节奏化传播扩声量，京东渠道资源承接转化。</b></p>
+      </div>
+      <div class="chip-row">
+        <span class="chip">👥 人群：在地跑者（粉丝量 × 数据权重 × IP 属地）</span>
+        <span class="chip">📝 内容：达人三方向 × 官方三段式</span>
+        <span class="chip">⏱ 节奏：赛前种草 → 赛中引爆 → 赛后回顾</span>
+        <span class="chip">🔗 渠道：小红书 + Keep App + 京东 + 线下展位</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 执行 ================= -->
+  <section class="stage" data-stage="执行">
+    <div class="stage-kicker">STAGE 03 · EXECUTION</div>
+    <div class="stage-head"><div class="stage-num">行</div><h2 class="stage-title">达人种草全链路</h2></div>
+    <div class="stage-body">
+      <div class="card">
+        <h4>招募 → 筛选（我执笔招募笔记）</h4>
+        <p>发布「Keep 精英跑者招募」笔记，<b>报名 135 人</b>；按粉丝体量、账号数据权重、IP 属地三维筛选出 <b>30 位全马/半马跑者</b>（筛选率 22%）。招募笔记单篇互动量最高 689 赞 / 546 收藏 / 691 评论。</p>
+      </div>
+      <div class="photos photos-2">
+        <img src="./photos/recruit-1.jpg" alt="招募笔记 192赞">
+        <img src="./photos/recruit-2.jpg" alt="招募笔记 689赞">
+      </div>
+      <div class="photo-cap">我执笔的招募笔记 · 小红书站内真实发布</div>
+      <div class="card">
+        <h4>Brief → 内容</h4>
+        <p>制定达人 brief：三大内容方向（完赛集锦 / 备赛攻略 / 产品实测）+ 卖点口语化转化要求 + 拍摄穿着规范 + 话题与评论区运营规则，<b>90 篇笔记零违规返工</b>。</p>
+      </div>
+      <div class="card">
+        <h4>发布 → 转化</h4>
+        <p>每人 2 篇：赛前种草（6.8-6.10）+ 赛后回顾（必含展位打卡）；衔接京东拍单与好评沉淀，<b>拍单率 100%、好评 60 条（好评率 100%）</b>。</p>
+      </div>
+      <div class="photos photos-2">
+        <img src="./photos/race-1.jpg" alt="KOC 赛场返图">
+        <img src="./photos/race-2.jpg" alt="KOC 赛场返图">
+      </div>
+      <div class="photo-cap">KOC 赛场实测返图 · KPB 新品上身参赛</div>
+    </div>
+  </section>
+
+  <!-- ================= 突发 ================= -->
+  <section class="stage" data-stage="突发">
+    <div class="stage-kicker">STAGE 04 · CRISIS</div>
+    <div class="stage-head"><div class="stage-num">救</div><h2 class="stage-title">补给站突发：新品断档危机</h2></div>
+    <div class="stage-body">
+      <div class="card" style="border-left: 4px solid var(--red);">
+        <h4>发生了什么</h4>
+        <p>种草产品 KPB 为<b>未上市新品</b>，需提前协调工厂赶工尺码数量。负责 KOL 对接的同事未及时同步服饰信息，导致与供应链敲定时只明确了 KOC 部分——<b>KOL 种草出现时间卡点</b>。</p>
+      </div>
+      <div class="alert-card">
+        <div class="step"><span class="num">1</span><span>收到反馈后<b>第一时间联系供应链</b>，确认加急赶制可行性——需求被驳回。</span></div>
+        <div class="step"><span class="num">2</span><span>立即给出替代方案：在不影响 KOC 进度的前提下，<b>先挪用部分 KOC 服饰给 KOL 完成拍摄</b>。</span></div>
+        <div class="step"><span class="num">3</span><span>新品入库后<b>立即申请顺丰加急补发</b>给 KOC。</span></div>
+        <div class="step"><span class="num ok">✓</span><span><b>两条线进度拉齐，90 篇笔记无一延误。</b></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 冲刺 ================= -->
+  <section class="stage" data-stage="冲刺">
+    <div class="stage-kicker">STAGE 05 · RESULT</div>
+    <div class="stage-head"><div class="stage-num">冲</div><h2 class="stage-title">冲刺：完整数据</h2></div>
+    <div class="data-wall">
+      <div class="data-item"><div class="data-num" data-n="135">0</div><div class="data-label">招募报名人数</div></div>
+      <div class="data-item"><div class="data-num" data-n="30">0</div><div class="data-label">合作达人（位）</div></div>
+      <div class="data-item"><div class="data-num" data-n="90">0</div><div class="data-label">种草笔记（篇）</div></div>
+      <div class="data-item"><div class="data-num" data-n="35" data-suffix="万">0</div><div class="data-label">达人内容总曝光</div></div>
+      <div class="data-item"><div class="data-num" data-n="1" data-suffix="万+">0</div><div class="data-label">达人内容总互动</div></div>
+      <div class="data-item"><div class="data-num" data-n="60">0</div><div class="data-label">京东好评（条）</div></div>
+      <div class="data-item"><div class="data-num" data-n="5000" data-suffix="">0</div><div class="data-label">直播专场最高在线（人）</div></div>
+      <div class="data-item"><div class="data-num" data-n="2" data-suffix="万+">0</div><div class="data-label">展位现场人流</div></div>
+      <div class="data-item"><div class="data-num" data-n="5" data-suffix="万">0</div><div class="data-label">总销售额（线下2w+线上3w）</div></div>
+      <div class="data-item"><div class="data-num" data-n="2700" data-suffix="%">0</div><div class="data-label">店铺 PV 环比增长</div></div>
+      <div class="data-item"><div class="data-num" data-n="2585" data-suffix="%">0</div><div class="data-label">店铺 UV 环比增长</div></div>
+      <div class="data-item"><div class="data-num" data-n="4">0</div><div class="data-label">官方传播笔记（篇）</div></div>
+    </div>
+    <div class="photos">
+      <img src="./photos/booth-1.jpg" alt="展位拉新">
+      <img src="./photos/booth-3.jpg" alt="展位人流">
+      <img src="./photos/booth-4.jpg" alt="展位现场">
+    </div>
+    <div class="photo-cap">线下展位 · 拉新与销售现场</div>
+  </section>
+
+  <!-- ================= 终点 ================= -->
+  <section class="stage" data-stage="终点">
+    <div class="stage-kicker">STAGE 06 · REVIEW</div>
+    <div class="stage-head"><div class="stage-num">盘</div><h2 class="stage-title">终点复盘</h2></div>
+    <div class="review-grid">
+      <div class="card good">
+        <h4>✓ 做对了</h4>
+        <p>选人逻辑成立（在地 + 数据权重，90 篇零返工）；节奏前置（种草卡赛前窗口，赛后情绪承接）；闭环完整（种草 → 拍单 → 好评 → 站内再触达，PV/UV 暴增验证「内容即流量」）。</p>
+      </div>
+      <div class="card better">
+        <h4>↗ 可以更好</h4>
+        <p>官方账号自然流量弱（4 篇总曝光 1 万），叠加薯条投放可再放大；达人端可加「爆款钩子」引导（PB 故事、破三叙事）；跨部门信息同步应建立共享文档机制，避免尺码信息断点。</p>
+      </div>
+      <div class="card copy">
+        <h4>⧉ 可复制经验</h4>
+        <p>「垂类赛事 + 在地达人 + 电商拍单」的组合模式可复制到任何区域赛事与垂类新品上市：锁定人群浓度最高的场景，用在地达人生产真实内容，用电商完成交易闭环与口碑沉淀。</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">Keep × 京东运动 614 贵马赛事合作 · 陈姝霓 · 2026</div>
+</main>
+
+<script>
+const stages = [...document.querySelectorAll('.stage[data-stage]')];
+const track = document.getElementById('track');
+const fill = document.getElementById('trackFill');
+const runner = document.getElementById('runner');
+
+stages.forEach((s) => {
+  const el = document.createElement('div');
+  el.className = 'station';
+  el.innerHTML = `<div class="station-dot"></div><span class="station-label">${s.dataset.stage}</span>`;
+  el.addEventListener('click', () => s.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  track.appendChild(el);
+});
+const stationEls = [...track.querySelectorAll('.station')];
+
+function onScroll() {
+  const doc = document.documentElement;
+  const total = doc.scrollHeight - window.innerHeight;
+  const pct = Math.min(1, Math.max(0, window.scrollY / total));
+  fill.style.height = (pct * 100) + '%';
+  runner.style.top = (pct * 100) + '%';
+  let activeIdx = 0;
+  stages.forEach((s, i) => {
+    if (s.getBoundingClientRect().top < window.innerHeight * 0.5) activeIdx = i;
+  });
+  stationEls.forEach((el, i) => el.classList.toggle('active', i === activeIdx));
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('show'); });
+}, { threshold: 0.1 });
+stages.forEach((s) => io.observe(s));
+
+const numIO = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    numIO.unobserve(el);
+    const n = +el.dataset.n;
+    const suffix = el.dataset.suffix || '';
+    const dur = 1300;
+    const t0 = performance.now();
+    function tick(t) {
+      const p = Math.min(1, (t - t0) / dur);
+      const e = 1 - Math.pow(1 - p, 3);
+      el.innerHTML = Math.round(n * e) + (suffix ? `<small>${suffix}</small>` : '');
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.data-num').forEach((el) => numIO.observe(el));
+</script>
+</body>
+</html>
