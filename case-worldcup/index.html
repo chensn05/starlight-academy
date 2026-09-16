@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>世界杯跑量赛 · Campaign 案例</title>
+<style>
+  :root {
+    --green: #1FA54A;
+    --green-deep: #137A36;
+    --lime: #B8E33D;
+    --cream: #F7FBF2;
+    --ink: #1E2B1E;
+    --gray: #6b7a6b;
+    --line: #dcead8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  .track {
+    position: fixed; left: 28px; top: 50%; transform: translateY(-50%);
+    z-index: 50; display: flex; flex-direction: column; align-items: center;
+    height: 58vh;
+  }
+  .track-line {
+    position: absolute; top: 0; bottom: 0; width: 4px;
+    background: #d5e6cf; border-radius: 2px; left: 50%; transform: translateX(-50%);
+  }
+  .track-fill {
+    position: absolute; top: 0; width: 4px; left: 50%; transform: translateX(-50%);
+    background: var(--green); border-radius: 2px; height: 0%; transition: height .15s linear;
+  }
+  .track-ball {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    top: 0%; font-size: 20px; transition: top .15s linear; z-index: 2;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.25));
+  }
+  .station { position: relative; flex: 1; display: flex; align-items: center; }
+  .station-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #fff; border: 3px solid #d5e6cf; z-index: 3; transition: all .3s;
+  }
+  .station.active .station-dot {
+    border-color: var(--green); background: var(--green);
+    transform: scale(1.25); box-shadow: 0 0 12px rgba(31,165,74,.5);
+  }
+  .station-label {
+    position: absolute; left: 26px; font-size: 12px; color: var(--gray);
+    white-space: nowrap; letter-spacing: 1px; transition: all .3s; cursor: pointer;
+  }
+  .station.active .station-label { color: var(--green-deep); font-weight: 700; }
+
+  .main { margin-left: 110px; max-width: 800px; padding: 0 32px 80px; }
+
+  .hero { padding: 72px 0 24px; }
+  .hero-tag {
+    display: inline-block; background: var(--green); color: #fff;
+    font-size: 13px; letter-spacing: 2px; padding: 6px 16px;
+    border-radius: 999px; width: fit-content; margin-bottom: 18px;
+  }
+  .hero h1 { font-size: 44px; line-height: 1.25; margin-bottom: 12px; letter-spacing: 1px; }
+  .hero h1 em { color: var(--green); font-style: normal; }
+  .hero .sub { font-size: 16.5px; color: var(--gray); line-height: 1.9; max-width: 620px; }
+  .role-card {
+    margin-top: 20px; background: #fff; border-radius: 14px; padding: 16px 20px;
+    border: 1px solid var(--line); border-left: 5px solid var(--green);
+    font-size: 14.5px; line-height: 1.9; color: #3d4a3d;
+  }
+  .role-card b { color: var(--green-deep); }
+  .scroll-hint { margin-top: 26px; font-size: 13px; color: var(--gray); animation: bob 1.6s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(6px); } }
+
+  .stage { padding: 44px 0; opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .stage.show { opacity: 1; transform: translateY(0); }
+  .stage-head { display: flex; align-items: center; gap: 13px; margin-bottom: 16px; }
+  .stage-num {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--green); color: #fff; display: grid; place-items: center;
+    font-size: 17px; font-weight: 700; flex-shrink: 0;
+  }
+  .stage-title { font-size: 26px; letter-spacing: 1px; }
+  .stage-kicker { font-size: 12px; color: var(--green); letter-spacing: 3px; margin-bottom: 5px; }
+  .stage-body { font-size: 15px; line-height: 1.95; color: #3d4a3d; }
+
+  .card {
+    background: #fff; border-radius: 16px; padding: 18px 22px;
+    box-shadow: 0 6px 24px rgba(31,110,60,.08);
+    border: 1px solid var(--line); margin: 12px 0;
+  }
+  .card h4 { font-size: 14.5px; color: var(--green-deep); margin-bottom: 8px; letter-spacing: 1px; }
+  .card p { font-size: 14px; line-height: 1.9; }
+
+  .trio { display: grid; gap: 10px; margin: 14px 0; }
+  .trio-item {
+    background: #fff; border-radius: 14px; padding: 16px 20px;
+    border: 1px solid var(--line); display: flex; gap: 14px; align-items: flex-start;
+  }
+  .trio-item .t-icon {
+    width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+    display: grid; place-items: center; font-size: 18px;
+    background: linear-gradient(135deg, #e2f5d9, #d0ecc8);
+  }
+  .trio-item b { display: block; font-size: 14.5px; margin-bottom: 4px; }
+  .trio-item span { font-size: 13.5px; line-height: 1.8; color: #55675a; }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+  .chip { background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: 13px; }
+
+  .play-demo {
+    background: linear-gradient(135deg, #137A36, #1FA54A);
+    border-radius: 16px; padding: 22px 24px; color: #fff; margin: 14px 0;
+  }
+  .play-demo .flow {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    font-size: 14px; line-height: 1.7; margin-top: 10px;
+  }
+  .play-demo .flow b { background: rgba(255,255,255,.16); padding: 4px 10px; border-radius: 8px; font-weight: 600; }
+  .play-demo .arrow { opacity: .7; }
+  .play-demo .slogan { font-size: 17px; font-weight: 700; letter-spacing: 1px; }
+
+  .okr { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+  .okr-item {
+    background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px;
+    font-size: 13.5px; line-height: 1.8;
+  }
+  .okr-item b { color: var(--green-deep); }
+
+  .data-strip, .data-wall { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; }
+  .data-item {
+    background: #fff; border-radius: 14px; padding: 18px 12px; text-align: center;
+    border: 1px solid var(--line); box-shadow: 0 4px 16px rgba(31,110,60,.07);
+  }
+  .data-num {
+    font-size: 32px; font-weight: 800; color: var(--green);
+    font-variant-numeric: tabular-nums; line-height: 1.1;
+  }
+  .data-num small { font-size: 16px; font-weight: 600; }
+  .data-label { font-size: 12px; color: var(--gray); margin-top: 6px; line-height: 1.5; }
+
+  .review-grid { display: grid; gap: 10px; }
+  .review-grid .card.good { border-left: 5px solid #1FA54A; }
+  .review-grid .card.better { border-left: 5px solid #f4a259; }
+  .review-grid .card.copy { border-left: 5px solid #4a7fae; }
+
+  .nda-note {
+    margin-top: 14px; font-size: 12px; color: var(--gray);
+    border-top: 1px dashed var(--line); padding-top: 10px;
+  }
+
+  .footer { text-align: center; padding: 40px 0 26px; color: var(--gray); font-size: 12.5px; }
+
+  @media (max-width: 720px) {
+    .track { left: 6px; height: 50vh; }
+    .station-label { display: none; }
+    .main { margin-left: 38px; padding: 0 14px 60px; }
+    .hero h1 { font-size: 28px; }
+    .hero { padding-top: 48px; }
+    .stage-title { font-size: 21px; }
+    .stage { padding: 32px 0; }
+    .data-strip, .data-wall, .okr { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<nav class="track" id="track">
+  <div class="track-line"></div>
+  <div class="track-fill" id="trackFill"></div>
+  <div class="track-ball" id="ball">⚽</div>
+</nav>
+
+<main class="main">
+
+  <!-- ================= 赛前热身 ================= -->
+  <section class="hero stage" data-stage="热身">
+    <span class="hero-tag">GROWTH CAMPAIGN · 2026.06—07</span>
+    <h1>世界杯跑量赛<br><em>跑量单双跑，跑中就开奖</em></h1>
+    <p class="sub">
+      借势 2026 世界杯顶级流量窗口，把「跑步公里数」变成「比赛预测凭证」，为某头部运动 App 打造其首个全国跑者线上互动活动。
+    </p>
+    <div class="role-card">
+      <b>我的角色：项目统筹</b>，全板块参与——玩法策划与传播规划 · KOC 预埋与社群促产 · 官方账号内容节奏 · 线下跑团建联 · 数据追踪与复盘
+    </div>
+    <div class="data-strip">
+      <div class="data-item"><div class="data-num" data-n="15" data-suffix="w">0</div><div class="data-label">活动期日均 WAU（原 9w）</div></div>
+      <div class="data-item"><div class="data-num" data-n="5" data-suffix="w">0</div><div class="data-label">峰值 DAU（原 3w）</div></div>
+      <div class="data-item"><div class="data-num" data-n="5000" data-suffix="万+">0</div><div class="data-label">活动话题总曝光</div></div>
+      <div class="data-item"><div class="data-num" data-n="2.5" data-suffix="×" data-decimal="1">0</div><div class="data-label">曝光 vs 上届校园赛</div></div>
+    </div>
+    <div class="scroll-hint">↓ 进入赛程</div>
+  </section>
+
+  <!-- ================= 小组赛：背景与洞察 ================= -->
+  <section class="stage" data-stage="洞察">
+    <div class="stage-kicker">GROUP STAGE · WHY</div>
+    <div class="stage-head"><div class="stage-num">析</div><h2 class="stage-title">为什么打这场仗</h2></div>
+    <div class="stage-body">
+      <div class="trio">
+        <div class="trio-item">
+          <div class="t-icon">🌍</div>
+          <div><b>Why 世界杯</b><span>全球顶级体育 IP，天然话题热度；小红书社区拿下 26 年短视频转播权，站内天然流量倾斜。</span></div>
+        </div>
+        <div class="trio-item">
+          <div class="t-icon">👥</div>
+          <div><b>Why 该产品</b><span>跑步 App 用户画像与世界杯受众高度重叠（男性 70%，25-45 岁为主），人群天然契合。</span></div>
+        </div>
+        <div class="trio-item">
+          <div class="t-icon">⚽</div>
+          <div><b>Why 跑步预测</b><span>把跑步行为与赛事结果绑定，让每一公里都有意义，最大程度刺激用户「压中」的爽感。</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h4>核心洞察</h4>
+        <p>世界杯期间男性用户关注度达全年峰值。用「赛事热点 × 跑步场景 × 激励机制」的组合，把观赛热情转化为实际跑步行为——<b>让跑步变成看球的一部分</b>。你跑的每一公里，都在预测比赛结果。</p>
+      </div>
+      <div class="card">
+        <h4>目标 OKR（对标 3rd 校园赛）</h4>
+        <div class="okr">
+          <div class="okr-item"><b>增长侧</b>：日均 WAU 9w → 15w，峰值 DAU 3w → 5w，并带动拉新</div>
+          <div class="okr-item"><b>用户侧</b>：参与活动 UV、连续参与 3 次+ 用户 UV、每日预测参与率（基准：校园赛参与 2.7w+）</div>
+          <div class="okr-item"><b>C 端认知</b>：话题总曝光 5000 万+、站外热搜 >1、话题笔记 3000+ 篇、爆款 CES 笔记 300+ 篇（基准：校园赛曝光 2000w+）</div>
+          <div class="okr-item"><b>品牌侧</b>：打造该产品首个全国跑者线上活动的 C 端认知</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 玩法 ================= -->
+  <section class="stage" data-stage="玩法">
+    <div class="stage-kicker">GROUP STAGE · MECHANISM</div>
+    <div class="stage-head"><div class="stage-num">玩</div><h2 class="stage-title">核心玩法：跑量单双跑</h2></div>
+    <div class="stage-body">
+      <div class="play-demo">
+        <div class="slogan">跑起来猜，跑量定单双，跑中就开奖！</div>
+        <div class="flow">
+          <b>提前选一场明日开赛的比赛</b><span class="arrow">→</span>
+          <b>今天去跑步</b><span class="arrow">→</span>
+          <b>公里数取整定单双</b><span class="arrow">→</span>
+          <b>跑中立刻抽奖 🎟️</b>
+        </div>
+        <div class="flow" style="margin-top:8px; font-size:13px; opacity:.92;">
+          例：跑 13.86km → 取整 13（单数）→ 押主队赢；跑 4.21km → 取整 4（双数）→ 押客队赢；平局双方均算跑中。
+        </div>
+      </div>
+      <div class="card">
+        <h4>机制设计的三个巧思</h4>
+        <p>① <b>行为即凭证</b>：预测不需额外动作，跑步本身就是参与方式，门槛极低；② <b>即时开奖</b>：跑中即抽奖，即时反馈强化爽感；③ <b>连续加码</b>：连续参与 3 次新增 1 次抽奖机会、连续 7 次新增 2 次，用抽奖权益驱动活动期留存。</p>
+      </div>
+      <div class="card">
+        <h4>我的统筹范围</h4>
+        <p>玩法与规则策划对齐 · 15s 玩法教学图文（观赛+跑步场景切换脚本）· 分享卡迭代（分享卡 2.0 上线）· 奖品池与预算管理 · 三阶段传播节奏（预热 6/9-6/11 → 小组赛 6/12-6/28 → 淘汰赛 6/29-7/19）。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 淘汰赛：传播与促产 ================= -->
+  <section class="stage" data-stage="促产">
+    <div class="stage-kicker">KNOCKOUT · DISTRIBUTION</div>
+    <div class="stage-head"><div class="stage-num">播</div><h2 class="stage-title">三层促产体系</h2></div>
+    <div class="stage-body">
+      <div class="card">
+        <h4>官方层 OGC</h4>
+        <p>6/10 活动官宣（小红书+抖音双端）· 每日赛程更新 · 官方翻牌优质 UGC 笔记 · 联动社区官方账号释放资源位 · 淘汰赛期奖品加码、决赛夜特别奖品。</p>
+      </div>
+      <div class="card">
+        <h4>KOC 预埋与社群层</h4>
+        <p>预埋 10+ 博主首波示范笔记，按垂类定制选题（跑步博主「我的跑量预测日记」/ 足球博主「看球也要跑球」/ 生活博主「跑完就知道谁赢了」/ 搞笑博主「跑错了但跑得很开心」）；30+ 重点跑群与校园社群通发；以官方翻牌作为二次激励透传；结合热门比赛与冷门爆冷做话题二创引导。</p>
+      </div>
+      <div class="card">
+        <h4>线下跑团层</h4>
+        <p>世界杯期间组织 3 次+ 线下跑团活动：成员用该产品记录跑步并带话题发笔记；<b>新签 19 个跑团建联，覆盖 851 人，落地 7 场活动，发放周边 174 件，累计覆盖社群 3500 人+，回收小红书笔记 86 篇</b>（周边+笔记流量激励）。</p>
+      </div>
+      <div class="chip-row">
+        <span class="chip">#世界杯跑量赛</span>
+        <span class="chip">#世界杯跑步打卡挑战</span>
+        <span class="chip">#跑起来猜</span>
+        <span class="chip">#跑量单双数</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 决赛夜：数据 ================= -->
+  <section class="stage" data-stage="决赛夜">
+    <div class="stage-kicker">FINAL · RESULT</div>
+    <div class="stage-head"><div class="stage-num">果</div><h2 class="stage-title">决赛夜：成绩单</h2></div>
+    <div class="stage-body">
+      <p style="margin-bottom:6px;">活动期 40 天（6.11—7.21），核心指标全部达成：</p>
+      <div class="data-wall">
+        <div class="data-item"><div class="data-num" data-n="15" data-suffix="w">0</div><div class="data-label">日均 WAU 达成<br>（活动前 9w）</div></div>
+        <div class="data-item"><div class="data-num" data-n="5" data-suffix="w">0</div><div class="data-label">峰值 DAU 达成<br>（活动前 3w）</div></div>
+        <div class="data-item"><div class="data-num" data-n="5000" data-suffix="万+">0</div><div class="data-label">话题总曝光<br>（校园赛 2000w，2.5×）</div></div>
+        <div class="data-item"><div class="data-num" data-n="67" data-suffix="%">0</div><div class="data-label">WAU 相对提升幅度</div></div>
+        <div class="data-item"><div class="data-num" data-n="19">0</div><div class="data-label">新签跑团建联（个）</div></div>
+        <div class="data-item"><div class="data-num" data-n="851">0</div><div class="data-label">跑团覆盖人数（人）</div></div>
+        <div class="data-item"><div class="data-num" data-n="3500" data-suffix="+">0</div><div class="data-label">累计覆盖社群（人）</div></div>
+        <div class="data-item"><div class="data-num" data-n="86">0</div><div class="data-label">跑团回收笔记（篇）</div></div>
+        <div class="data-item"><div class="data-num" data-n="7">0</div><div class="data-label">线下落地活动（场）</div></div>
+        <div class="data-item"><div class="data-num" data-n="174">0</div><div class="data-label">周边发放（件）</div></div>
+        <div class="data-item"><div class="data-num" data-n="3" data-suffix="+">0</div><div class="data-label">世界杯期跑团活动（次）</div></div>
+        <div class="data-item"><div class="data-num" data-n="40" data-suffix="天">0</div><div class="data-label">活动全周期</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 颁奖台：复盘 ================= -->
+  <section class="stage" data-stage="颁奖台">
+    <div class="stage-kicker">PODIUM · REVIEW</div>
+    <div class="stage-head"><div class="stage-num">盘</div><h2 class="stage-title">颁奖台：复盘</h2></div>
+    <div class="review-grid">
+      <div class="card good">
+        <h4>✓ 做对了</h4>
+        <p>玩法「行为即凭证」把参与门槛打到最低；连续参与抽奖加码驱动 40 天长周期留存；官方+KOC+社群+跑团三层促产同时开工；借势世界杯转播权的站内天然流量，话题曝光做到上届校园赛的 2.5 倍。</p>
+      </div>
+      <div class="card better">
+        <h4>↗ 可以更好</h4>
+        <p>热点运营可以更前置——把「决赛夜」作为独立的传播战役来规划，而不是赛程收尾；跑团侧 POV 真实记录（跑者第一视角）内容比例可再提高，真实体验比精致官方内容更有传播力。</p>
+      </div>
+      <div class="card copy">
+        <h4>⧉ 可复制经验</h4>
+        <p>「顶级 IP 热点 × 产品行为绑定 × 即时激励」的赛事营销模型可复制：找到与产品人群重叠的大事件，把产品核心行为变成参与凭证，用即时反馈和连续加码拉留存。同时验证了——每场赛事都应自带 IP 叙事和社交传播钩子，让用户跑完后有内容可发、有故事可讲。</p>
+      </div>
+    </div>
+    <div class="nda-note">注：产品处于内部保密期，案例中隐去产品名，以「某头部运动 App / 该产品」代称；数据均为真实活动复盘口径。</div>
+  </section>
+
+  <div class="footer">世界杯跑量赛 · 项目统筹 · 陈姝霓 · 2026.06—07</div>
+</main>
+
+<script>
+const stages = [...document.querySelectorAll('.stage[data-stage]')];
+const track = document.getElementById('track');
+const fill = document.getElementById('trackFill');
+const ball = document.getElementById('ball');
+
+stages.forEach((s) => {
+  const el = document.createElement('div');
+  el.className = 'station';
+  el.innerHTML = `<div class="station-dot"></div><span class="station-label">${s.dataset.stage}</span>`;
+  el.addEventListener('click', () => s.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  track.appendChild(el);
+});
+const stationEls = [...track.querySelectorAll('.station')];
+
+function onScroll() {
+  const doc = document.documentElement;
+  const total = doc.scrollHeight - window.innerHeight;
+  const pct = Math.min(1, Math.max(0, window.scrollY / total));
+  fill.style.height = (pct * 100) + '%';
+  ball.style.top = (pct * 100) + '%';
+  let activeIdx = 0;
+  stages.forEach((s, i) => {
+    if (s.getBoundingClientRect().top < window.innerHeight * 0.5) activeIdx = i;
+  });
+  stationEls.forEach((el, i) => el.classList.toggle('active', i === activeIdx));
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('show'); });
+}, { threshold: 0.1 });
+stages.forEach((s) => io.observe(s));
+
+const numIO = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (!entry.isIntersecting) return;
+    const el = entry.target;
+    numIO.unobserve(el);
+    const n = parseFloat(el.dataset.n);
+    const decimal = +(el.dataset.decimal || 0);
+    const suffix = el.dataset.suffix || '';
+    const dur = 1300;
+    const t0 = performance.now();
+    function tick(t) {
+      const p = Math.min(1, (t - t0) / dur);
+      const e = 1 - Math.pow(1 - p, 3);
+      el.innerHTML = (n * e).toFixed(decimal) + (suffix ? `<small>${suffix}</small>` : '');
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.data-num').forEach((el) => numIO.observe(el));
+</script>
+</body>
+</html>
