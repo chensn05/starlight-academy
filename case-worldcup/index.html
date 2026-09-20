@@ -8,7 +8,6 @@
   :root {
     --green: #1FA54A;
     --green-deep: #137A36;
-    --lime: #B8E33D;
     --cream: #F7FBF2;
     --ink: #1E2B1E;
     --gray: #6b7a6b;
@@ -21,7 +20,6 @@
     color: var(--ink);
     overflow-x: hidden;
   }
-
   .track {
     position: fixed; left: 28px; top: 50%; transform: translateY(-50%);
     z-index: 50; display: flex; flex-direction: column; align-items: center;
@@ -140,17 +138,18 @@
     font-variant-numeric: tabular-nums; line-height: 1.1;
   }
   .data-num small { font-size: 16px; font-weight: 600; }
+  .data-num.text { font-size: 22px; }
   .data-label { font-size: 12px; color: var(--gray); margin-top: 6px; line-height: 1.5; }
-
-  .review-grid { display: grid; gap: 10px; }
-  .review-grid .card.good { border-left: 5px solid #1FA54A; }
-  .review-grid .card.better { border-left: 5px solid #f4a259; }
-  .review-grid .card.copy { border-left: 5px solid #4a7fae; }
 
   .nda-note {
     margin-top: 14px; font-size: 12px; color: var(--gray);
     border-top: 1px dashed var(--line); padding-top: 10px;
   }
+
+  .review-grid { display: grid; gap: 10px; }
+  .review-grid .card.good { border-left: 5px solid #1FA54A; }
+  .review-grid .card.better { border-left: 5px solid #f4a259; }
+  .review-grid .card.copy { border-left: 5px solid #4a7fae; }
 
   .footer { text-align: center; padding: 40px 0 26px; color: var(--gray); font-size: 12.5px; }
 
@@ -187,10 +186,10 @@
       <b>我的角色：项目统筹</b>，全板块参与——玩法策划与传播规划 · KOC 预埋与社群促产 · 官方账号内容节奏 · 线下跑团建联 · 数据追踪与复盘
     </div>
     <div class="data-strip">
-      <div class="data-item"><div class="data-num" data-n="15" data-suffix="w">0</div><div class="data-label" style="white-space:nowrap">日均 WAU（原 9w）</div></div>
-      <div class="data-item"><div class="data-num" data-n="5" data-suffix="w">0</div><div class="data-label">峰值 DAU（原 3w）</div></div>
-      <div class="data-item"><div class="data-num" data-n="5000" data-suffix="万+">0</div><div class="data-label">活动话题总曝光</div></div>
-      <div class="data-item"><div class="data-num" data-n="2.5" data-suffix="×" data-decimal="1">0</div><div class="data-label">曝光 vs 上届校园赛</div></div>
+      <div class="data-item"><div class="data-num" data-n="67" data-suffix="%">0</div><div class="data-label">WAU 环比提升</div></div>
+      <div class="data-item"><div class="data-num" data-n="67" data-suffix="%">0</div><div class="data-label">峰值 DAU 提升</div></div>
+      <div class="data-item"><div class="data-num" data-n="2.5" data-suffix="×" data-decimal="1">0</div><div class="data-label">话题曝光 vs 上届校园赛</div></div>
+      <div class="data-item"><div class="data-num" data-n="40" data-suffix="天">0</div><div class="data-label">活动全周期</div></div>
     </div>
     <div class="scroll-hint">↓ 进入赛程</div>
   </section>
@@ -203,11 +202,11 @@
       <div class="trio">
         <div class="trio-item">
           <div class="t-icon">🌍</div>
-          <div><b>Why 世界杯</b><span>全球顶级体育 IP，天然话题热度；小红书社区拿下 26 年短视频转播权，站内天然流量倾斜。</span></div>
+          <div><b>Why 世界杯</b><span>全球顶级体育 IP，天然话题热度；平台社区拿下 26 年短视频转播权，站内天然流量倾斜。</span></div>
         </div>
         <div class="trio-item">
           <div class="t-icon">👥</div>
-          <div><b>Why 该产品</b><span>跑步 App 用户画像与世界杯受众高度重叠（男性 70%，25-45 岁为主），人群天然契合。</span></div>
+          <div><b>Why 该产品</b><span>跑步 App 用户画像与世界杯受众高度重叠（男性为主，25-45 岁为核心），人群天然契合。</span></div>
         </div>
         <div class="trio-item">
           <div class="t-icon">⚽</div>
@@ -221,9 +220,9 @@
       <div class="card">
         <h4>目标 OKR（对标 3rd 校园赛）</h4>
         <div class="okr">
-          <div class="okr-item"><b>增长侧</b>：日均 WAU 9w → 15w，峰值 DAU 3w → 5w，并带动拉新</div>
-          <div class="okr-item"><b>用户侧</b>：参与活动 UV、连续参与 3 次+ 用户 UV<br>每日预测参与率（基准：校园赛参与 2.7w+）</div>
-          <div class="okr-item"><b>C 端认知</b>：话题总曝光 5000 万+、站外热搜 >1、话题笔记 3000+ 篇、爆款 CES 笔记 300+ 篇（基准：校园赛曝光 2000w+）</div>
+          <div class="okr-item"><b>增长侧</b>：活动期 WAU、峰值 DAU 均达成环比约 +67% 的增长目标</div>
+          <div class="okr-item"><b>用户侧</b>：参与活动 UV、连续参与 3 次+ 用户 UV<br>每日预测参与率（基准：校园赛参与规模）</div>
+          <div class="okr-item"><b>C 端认知</b>：话题总曝光达到上届校园赛的 2.5 倍、站外热搜、话题笔记规模化产出</div>
           <div class="okr-item"><b>品牌侧</b>：打造该产品首个全国跑者线上活动的 C 端认知</div>
         </div>
       </div>
@@ -253,7 +252,7 @@
       </div>
       <div class="card">
         <h4>我的统筹范围</h4>
-        <p>玩法与规则策划对齐 · 15s 玩法教学图文（观赛+跑步场景切换脚本）· 分享卡迭代（分享卡 2.0 上线）· 奖品池与预算管理 · 三阶段传播节奏（预热 6/9-6/11 → 小组赛 6/12-6/28 → 淘汰赛 6/29-7/19）。</p>
+        <p>玩法与规则策划对齐 · 15s 玩法教学图文（观赛+跑步场景切换脚本）· 分享卡迭代（分享卡 2.0 上线）· 奖品池与预算管理 · 三阶段传播节奏（预热 → 小组赛 → 淘汰赛）。</p>
       </div>
     </div>
   </section>
@@ -265,15 +264,15 @@
     <div class="stage-body">
       <div class="card">
         <h4>官方层 OGC</h4>
-        <p>6/10 活动官宣（小红书+抖音双端）· 每日赛程更新 · 官方翻牌优质 UGC 笔记 · 联动社区官方账号释放资源位 · 淘汰赛期奖品加码、决赛夜特别奖品。</p>
+        <p>活动官宣（社区+短视频双端）· 每日赛程更新 · 官方翻牌优质 UGC 笔记 · 联动社区官方账号释放资源位 · 淘汰赛期奖品加码、决赛夜特别奖品。</p>
       </div>
       <div class="card">
         <h4>KOC 预埋与社群层</h4>
-        <p>预埋 10+ 博主首波示范笔记，按垂类定制选题（跑步博主「我的跑量预测日记」/ 足球博主「看球也要跑球」/ 生活博主「跑完就知道谁赢了」/ 搞笑博主「跑错了但跑得很开心」）；30+ 重点跑群与校园社群通发；以官方翻牌作为二次激励透传；结合热门比赛与冷门爆冷做话题二创引导。</p>
+        <p>预埋十余位博主首波示范笔记，按垂类定制选题（跑步博主「我的跑量预测日记」/ 足球博主「看球也要跑球」/ 生活博主「跑完就知道谁赢了」/ 搞笑博主「跑错了但跑得很开心」）；三十余个重点跑群与校园社群通发；以官方翻牌作为二次激励透传；结合热门比赛与冷门爆冷做话题二创引导。</p>
       </div>
       <div class="card">
         <h4>线下跑团层</h4>
-        <p>世界杯期间组织 3 次+ 线下跑团活动：成员用该产品记录跑步并带话题发笔记；<b>新签 19 个跑团建联，覆盖 851 人，落地 7 场活动，发放周边 174 件，累计覆盖社群 3500 人+，回收小红书笔记 86 篇</b>（周边+笔记流量激励）。</p>
+        <p>世界杯期间组织多场线下跑团活动：成员用该产品记录跑步并带话题发笔记；<b>新签十余个跑团建联、覆盖数百人，落地多场活动，发放周边数百件，累计覆盖社群数千人，回收站内笔记近百篇</b>（周边+笔记流量激励）。</p>
       </div>
       <div class="chip-row">
         <span class="chip">#世界杯跑量赛</span>
@@ -289,21 +288,22 @@
     <div class="stage-kicker">FINAL · RESULT</div>
     <div class="stage-head"><div class="stage-num">果</div><h2 class="stage-title">决赛夜：成绩单</h2></div>
     <div class="stage-body">
-      <p style="margin-bottom:6px;">活动期 40 天（6.11—7.21），核心指标全部达成：</p>
+      <p style="margin-bottom:6px;">活动期 40 天，核心指标全部达成目标：</p>
       <div class="data-wall">
-        <div class="data-item"><div class="data-num" data-n="15" data-suffix="w">0</div><div class="data-label">日均 WAU 达成<br>（活动前 9w）</div></div>
-        <div class="data-item"><div class="data-num" data-n="5" data-suffix="w">0</div><div class="data-label">峰值 DAU 达成<br>（活动前 3w）</div></div>
-        <div class="data-item"><div class="data-num" data-n="5000" data-suffix="万+">0</div><div class="data-label">话题总曝光<br>（校园赛 2000w，2.5×）</div></div>
-        <div class="data-item"><div class="data-num" data-n="67" data-suffix="%">0</div><div class="data-label">WAU 相对提升幅度</div></div>
-        <div class="data-item"><div class="data-num" data-n="19">0</div><div class="data-label">新签跑团建联（个）</div></div>
-        <div class="data-item"><div class="data-num" data-n="851">0</div><div class="data-label">跑团覆盖人数（人）</div></div>
-        <div class="data-item"><div class="data-num" data-n="3500" data-suffix="+">0</div><div class="data-label">累计覆盖社群（人）</div></div>
-        <div class="data-item"><div class="data-num" data-n="86">0</div><div class="data-label">跑团回收笔记（篇）</div></div>
-        <div class="data-item"><div class="data-num" data-n="7">0</div><div class="data-label">线下落地活动（场）</div></div>
-        <div class="data-item"><div class="data-num" data-n="174">0</div><div class="data-label">周边发放（件）</div></div>
-        <div class="data-item"><div class="data-num" data-n="3" data-suffix="+">0</div><div class="data-label">世界杯期跑团活动（次）</div></div>
+        <div class="data-item"><div class="data-num" data-n="67" data-suffix="%">0</div><div class="data-label">WAU 环比提升<br>（达预期目标）</div></div>
+        <div class="data-item"><div class="data-num" data-n="67" data-suffix="%">0</div><div class="data-label">峰值 DAU 提升<br>（达预期目标）</div></div>
+        <div class="data-item"><div class="data-num" data-n="2.5" data-suffix="×" data-decimal="1">0</div><div class="data-label">话题总曝光<br>达上届校园赛倍数</div></div>
+        <div class="data-item"><div class="data-num" data-n="100" data-suffix="%">0</div><div class="data-label">核心 OKR 达成率</div></div>
+        <div class="data-item"><div class="data-num text">十余个</div><div class="data-label">新签跑团建联</div></div>
+        <div class="data-item"><div class="data-num text">数百人</div><div class="data-label">新签跑团覆盖</div></div>
+        <div class="data-item"><div class="data-num text">数千人</div><div class="data-label">累计覆盖社群</div></div>
+        <div class="data-item"><div class="data-num text">近百篇</div><div class="data-label">跑团回收站内笔记</div></div>
+        <div class="data-item"><div class="data-num text">多场</div><div class="data-label">线下落地活动</div></div>
+        <div class="data-item"><div class="data-num text">数百件</div><div class="data-label">周边发放</div></div>
+        <div class="data-item"><div class="data-num text">双端</div><div class="data-label">社区 + 短视频双端官宣</div></div>
         <div class="data-item"><div class="data-num" data-n="40" data-suffix="天">0</div><div class="data-label">活动全周期</div></div>
       </div>
+      <div class="nda-note">注：产品处于内部保密期，案例中隐去产品名；依保密协议，具体数值以增长幅度/相对倍数/量级呈现。</div>
     </div>
   </section>
 
@@ -325,7 +325,6 @@
         <p>「顶级 IP 热点 × 产品行为绑定 × 即时激励」的赛事营销模型可复制：找到与产品人群重叠的大事件，把产品核心行为变成参与凭证，用即时反馈和连续加码拉留存。同时验证了——每场赛事都应自带 IP 叙事和社交传播钩子，让用户跑完后有内容可发、有故事可讲。</p>
       </div>
     </div>
-    <div class="nda-note">注：产品处于内部保密期，案例中隐去产品名，以「某运动 App / 该产品」代称；数据均为真实活动复盘口径。</div>
   </section>
 
   <div class="footer">世界杯跑量赛 · 项目统筹 · 陈姝霓 · 2026.06—07</div>
@@ -370,6 +369,7 @@ const numIO = new IntersectionObserver((entries) => {
   entries.forEach((entry) => {
     if (!entry.isIntersecting) return;
     const el = entry.target;
+    if (!el.dataset.n) return;
     numIO.unobserve(el);
     const n = parseFloat(el.dataset.n);
     const decimal = +(el.dataset.decimal || 0);
